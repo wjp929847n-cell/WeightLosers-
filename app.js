@@ -28,3 +28,91 @@ let emojis=["❤️","🔥","💪","😋","👏","😂","🥗","🚴","🚣"];qs
 qs("#photoInput").onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=x=>{photo=x.target.result;qs("#photoPreview").src=photo;qs("#photoPreview").classList.remove("hidden")};r.readAsDataURL(f);}
 qs("#postBtn").onclick=()=>{let c=qs("#caption").value.trim();if(!c&&!photo)return;let p=active();posts.push({id:uid(),name:p.name,date:new Date().toISOString(),caption:c,photo,reactions:{}});try{localStorage.setItem("gf_posts",JSON.stringify(posts))}catch(e){alert(lang==="nl"?"Foto te groot om lokaal op te slaan.":"Photo is too large to save locally.");posts.pop();return}qs("#caption").value="";photo="";qs("#photoPreview").classList.add("hidden");renderFeed();}
 render();
+const onlineDb = window.supabase.createClient(
+  window.GEZINSFIT_SUPABASE_URL,
+  window.GEZINSFIT_SUPABASE_KEY
+);
+
+let onlinePhoto = null;
+
+const safe = s => String(s || "")
+  .replaceAll("&","&amp;")
+  .replaceAll("<","&lt;")
+  .replaceAll(">","&gt;");
+
+renderFeed = async function () {
+  const { data, error } = await onlineDb
+    .from("Posts")
+    .select("*")
+    .order("id", { ascending: false });
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  qs("#feed").innerHTML = (data || []).map(p => `
+    <div class="post">
+      <strong>${safe(p.Name)}</strong>
+      ${p.Photo_url ? `<img src="${p.Photo_url}" class="post-photo">` : ""}
+      <p>${safe(p.Caption)}</p>
+    </div>
+  `).join("");
+};
+
+qs("#photoInput").onchange = e => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const img = new Image();
+  img.onload = () => {
+    const max = 900;
+    const scale = Math.min(1, max / img.width);
+    const canvas = document.createElement("canvas");
+    canvas.width = img.width * scale;
+    canvas.height = img.height * scale;
+
+    canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+    onlinePhoto = canvas.toDataURL("image/jpeg", 0.7);
+
+    qs("#photoPreview").src = onlinePhoto;
+    qs("#photoPreview").classList.remove("hidden");
+  };
+
+  img.src = URL.createObjectURL(file);
+};
+
+qs("#postBtn").onclick = async () => {
+  const caption = qs("#caption").value.trim();
+  const person = active();
+
+  if (!caption && !onlinePhoto) return;
+
+  const { error } = await onlineDb.from("Posts").insert({
+    Name: person.name,
+    Caption: caption,
+    Photo_url: onlinePhoto
+  });
+
+  if (error) {
+    alert("Post niet opgeslagen: " + error.message);
+    return;
+  }
+
+  qs("#caption").value = "";
+  onlinePhoto = null;
+  qs("#photoPreview").classList.add("hidden");
+
+  await renderFeed();
+};
+
+renderFeed();
+
+onlineDb
+  .channel("gezinsfit-posts")
+  .on(
+    "postgres_changes",
+    { event: "*", schema: "public", table: "Posts" },
+    () => renderFeed()
+  )
+  .subscribe();
