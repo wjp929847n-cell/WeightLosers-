@@ -28,4 +28,3 @@ let emojis=["❤️","🔥","💪","😋","👏","😂","🥗","🚴","🚣"];qs
 qs("#photoInput").onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=x=>{photo=x.target.result;qs("#photoPreview").src=photo;qs("#photoPreview").classList.remove("hidden")};r.readAsDataURL(f);}
 qs("#postBtn").onclick=()=>{let c=qs("#caption").value.trim();if(!c&&!photo)return;let p=active();posts.push({id:uid(),name:p.name,date:new Date().toISOString(),caption:c,photo,reactions:{}});try{localStorage.setItem("gf_posts",JSON.stringify(posts))}catch(e){alert(lang==="nl"?"Foto te groot om lokaal op te slaan.":"Photo is too large to save locally.");posts.pop();return}qs("#caption").value="";photo="";qs("#photoPreview").classList.add("hidden");renderFeed();}
 render();
-w
