@@ -3,157 +3,105 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#17324D">
+<meta name="theme-color" content="#ff7fa3">
 <title>GezinsFit</title>
 <link rel="manifest" href="./manifest.json">
 <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
 <div id="onboarding" class="overlay hidden">
-  <div class="onboarding-card">
-    <div class="logo-bubble">GF</div>
-    <p class="eyebrow" data-i18n="welcomeTo">Welkom bij</p>
+  <div class="onboard card">
+    <div class="logo">🌈</div>
     <h1>GezinsFit</h1>
-    <p class="lead" data-i18n="onboardLead">Maak je eigen profiel en start een persoonlijk 12-wekenplan.</p>
+    <p id="welcomeText">Maak je profiel en kies wat jij leuk vindt.</p>
     <div class="form-grid">
-      <label><span data-i18n="name">Naam</span><input id="obName"></label>
-      <label><span data-i18n="age">Leeftijd</span><input id="obAge" type="number" min="18" max="100"></label>
-      <label><span data-i18n="height">Lengte (cm)</span><input id="obHeight" type="number" min="130" max="220"></label>
-      <label><span data-i18n="weight">Gewicht (kg)</span><input id="obWeight" type="number" step="0.1"></label>
-      <label><span data-i18n="goalWeight">Doelgewicht (kg)</span><input id="obGoal" type="number" step="0.1"></label>
-      <label><span data-i18n="activity">Activiteit</span>
-        <select id="obActivity">
-          <option value="low" data-i18n="actLow">Bijna niet actief</option>
-          <option value="light" data-i18n="actLight">Licht actief</option>
-          <option value="moderate" data-i18n="actModerate">Matig actief</option>
-        </select>
-      </label>
-      <label class="wide"><span data-i18n="prefs">Eetvoorkeuren / niet lusten</span><input id="obPrefs"></label>
-      <label class="wide"><span data-i18n="allergies">Allergieën / intoleranties</span><input id="obAllergies" placeholder="bv. noten, lactose, ei"></label>
+      <label><span data-t="name">Naam</span><input id="name"></label>
+      <label><span data-t="age">Leeftijd</span><input id="age" type="number"></label>
+      <label><span data-t="height">Lengte (cm)</span><input id="height" type="number"></label>
+      <label><span data-t="weight">Gewicht (kg)</span><input id="weight" type="number" step="0.1"></label>
+      <label><span data-t="goal">Doelgewicht (kg)</span><input id="goal" type="number" step="0.1"></label>
+      <label class="wide"><span data-t="prefs">Niet lusten / voorkeuren</span><input id="prefs" placeholder="bv. geen vis, geen havermout"></label>
+      <label class="wide"><span data-t="allergies">Allergieën / intoleranties</span><input id="allergies" placeholder="bv. noten, lactose"></label>
     </div>
-    <button id="finishOnboarding" class="primary-btn big" data-i18n="startPlan">Start mijn plan</button>
+    <button id="createProfile" class="primary big">✨ <span data-t="start">Start mijn plan</span></button>
   </div>
 </div>
 
-<div class="app-shell">
-<header class="topbar">
-  <div><p class="eyebrow" data-i18n="togetherHealthier">Samen gezonder</p><h1>GezinsFit</h1></div>
-  <div class="top-actions">
-    <button class="lang-btn" id="langBtn">EN</button>
-    <button class="icon-btn" id="addProfileBtn">＋</button>
-    <button class="icon-btn" id="themeBtn">☀️</button>
-  </div>
+<div class="shell">
+<header>
+  <div><div class="eyebrow" data-t="healthTogether">Samen gezonder</div><h1>GezinsFit ✨</h1></div>
+  <div class="header-actions"><button id="langBtn">EN</button><button id="addProfile">＋</button><button id="themeBtn">☀️</button></div>
 </header>
 
-<main>
-<section class="hero card">
-  <div><span class="pill" data-i18n="twelveWeek">12-weken traject</span><h2 id="heroTitle"></h2><p data-i18n="heroSub">Menu, beweging en voortgang op één plek.</p></div>
-  <div class="hero-stats"><div><strong id="weekLabel">1</strong><span data-i18n="week">week</span></div><div><strong id="donePct">0%</strong><span data-i18n="todayDone">vandaag klaar</span></div></div>
+<section class="hero">
+  <div>
+    <span class="pill">🌟 12 <span data-t="weeks">weken</span></span>
+    <h2 id="heroTitle">Kleine stappen, groot verschil!</h2>
+    <p data-t="heroText">Eten, bewegen en elkaar motiveren.</p>
+  </div>
+  <div class="hero-bubbles"><span>🥗</span><span>🚶</span><span>💪</span><span>💧</span></div>
 </section>
 
-<section class="profiles" id="profiles"></section>
+<div class="mood-strip">
+  <span>🌞 <b data-t="goodDay">Mooie dag!</b></span>
+  <span>🥗 <span data-t="eatWell">Lekker eten</span></span>
+  <span>🚶 <span data-t="moveMore">Meer bewegen</span></span>
+  <span>❤️ <span data-t="together">Samen volhouden</span></span>
+</div>
 
-<section class="week-picker card">
-  <div><p class="eyebrow" data-i18n="plan">Plan</p><h3 data-i18n="chooseWeek">Kies een week</h3></div>
-  <select id="weekSelect"></select>
+<section id="profiles" class="profiles"></section>
+
+<section class="card">
+  <div class="section-head">
+    <div><div class="eyebrow" data-t="sportOptions">Sportmogelijkheden</div><h3 data-t="chooseActivities">Wat heb jij ter beschikking?</h3></div>
+    <span class="badge">✨ <span data-t="personal">Persoonlijk</span></span>
+  </div>
+  <p class="muted" data-t="equipmentNote">Kies alles wat bij jou past. Je schema past zich automatisch aan.</p>
+  <div id="equipmentGrid" class="equipment-grid"></div>
 </section>
 
 <section class="grid">
-  <article class="card" id="movementCard">
-    <div class="section-head"><div><p class="eyebrow" data-i18n="today">Vandaag</p><h3 data-i18n="movement">Beweging</h3></div><span class="badge" data-i18n="buildSlowly">Rustig opbouwen</span></div>
+  <article class="card">
+    <div class="section-head"><div><div class="eyebrow" data-t="today">Vandaag</div><h3 data-t="movement">Beweging</h3></div><span class="badge">💪</span></div>
     <div id="movementTasks"></div>
   </article>
 
-  <article class="card" id="menuCard">
-    <div class="section-head"><div><p class="eyebrow" data-i18n="today">Vandaag</p><h3 data-i18n="menu">Menu</h3></div><span class="badge" id="calorieBadge"></span></div>
+  <article class="card">
+    <div class="section-head"><div><div class="eyebrow" data-t="today">Vandaag</div><h3 data-t="menu">Menu</h3></div><span id="kcalBadge" class="badge"></span></div>
     <div id="mealList"></div>
-    <p class="note" id="dietNote"></p>
+    <p id="foodNote" class="muted"></p>
   </article>
 
   <article class="card full">
-    <div class="section-head">
-      <div><p class="eyebrow" data-i18n="thisWeek">Deze week</p><h3 data-i18n="sevenDayMenu">7-daags menu</h3></div>
-      <button class="secondary-btn" id="editMenuBtn" data-i18n="editMenu">Menu aanpassen</button>
+    <div class="section-head"><div><div class="eyebrow" data-t="community">Community</div><h3 data-t="shareMoment">Deel een moment</h3></div><span class="badge">📸 ❤️ 🔥</span></div>
+    <div class="composer">
+      <label class="photo-picker">📷 <b data-t="addPhoto">Foto toevoegen</b><input id="photoInput" type="file" accept="image/*"></label>
+      <img id="photoPreview" class="preview hidden">
+      <textarea id="caption" rows="3" data-ph="caption" placeholder="Wat wil je delen?"></textarea>
+      <div class="emoji-bar" id="composerEmojis"></div>
+      <button id="postBtn" class="primary" data-t="post">Plaatsen</button>
     </div>
-    <div class="menu-table-wrap">
-      <table class="menu-table">
-        <thead><tr><th data-i18n="day">Dag</th><th data-i18n="breakfast">Ontbijt</th><th data-i18n="lunch">Lunch</th><th data-i18n="snack">Snack</th><th data-i18n="dinner">Avond</th></tr></thead>
-        <tbody id="weekMenu"></tbody>
-      </table>
-    </div>
+    <div class="live-note">👯 <span data-t="liveNote">Op dit moment blijven posts op je eigen toestel. Voor echte gedeelde foto's met vrienden koppelen we hierna de online database.</span></div>
+    <div id="feed" class="feed"></div>
   </article>
 
-  <article class="card full hidden" id="menuEditorCard">
-    <div class="section-head">
-      <div><p class="eyebrow" data-i18n="customize">Aanpassen</p><h3 data-i18n="editWeekMenu">Pas je weekmenu aan</h3></div>
-      <button class="secondary-btn" id="resetMenuBtn" data-i18n="resetMenu">Herstel standaard</button>
-    </div>
-    <p class="note" data-i18n="menuEditNote">Klik in een veld om iets te vervangen. Je wijzigingen worden per profiel en week opgeslagen.</p>
+  <article class="card full">
+    <div class="section-head"><div><div class="eyebrow" data-t="weekMenu">Weekmenu</div><h3 data-t="editMeals">Pas gerechten aan</h3></div><button id="resetMenu" class="secondary" data-t="reset">Herstel</button></div>
     <div id="menuEditor"></div>
   </article>
 
-  <article class="card full">
-    <div class="section-head"><div><p class="eyebrow" data-i18n="recipe">Recept</p><h3 id="recipeTitle"></h3></div><span class="badge" data-i18n="family">Gezin</span></div>
-    <div class="recipe-grid"><div><h4 data-i18n="ingredients">Ingrediënten</h4><ul id="recipeIngredients"></ul></div><div><h4 data-i18n="preparation">Bereiding</h4><ol id="recipeSteps"></ol></div></div>
-    <div class="allergy-box"><strong data-i18n="allergySafety">Allergieveiligheid</strong><p data-i18n="allergySafetyNote">Controleer altijd etiketten en kruisbesmetting. De app kan geen medische allergieveiligheid garanderen.</p></div>
+  <article class="card">
+    <div class="section-head"><div><div class="eyebrow" data-t="progress">Voortgang</div><h3 data-t="weightTitle">Gewicht</h3></div><span class="badge">📈</span></div>
+    <div class="weight-box"><strong id="currentWeight"></strong><div class="bar"><div id="weightBar"></div></div><small id="weightGoal"></small></div>
+    <div class="inline"><input id="weightInput" type="number" step="0.1"><button id="saveWeight" class="primary" data-t="save">Opslaan</button></div>
   </article>
 
   <article class="card">
-    <div class="section-head"><div><p class="eyebrow" data-i18n="progress">Voortgang</p><h3 data-i18n="weightTitle">Gewicht</h3></div><span class="badge" id="goalBadge"></span></div>
-    <div class="weight-box"><div class="weight-current"><span data-i18n="latestMeasurement">Laatste meting</span><strong id="currentWeight">-</strong></div><div class="progress-track"><div id="weightProgress"></div></div><div class="goal-row"><span id="startLabel"></span><span id="goalLabel"></span></div></div>
-    <div class="input-row"><input id="weightInput" type="number" step="0.1"><button class="primary-btn" id="saveWeight" data-i18n="save">Opslaan</button></div>
-  </article>
-
-  <article class="card">
-    <div class="section-head"><div><p class="eyebrow" data-i18n="chart">Grafiek</p><h3 data-i18n="weightTrend">Gewichtstrend</h3></div></div>
-    <canvas id="weightChart" width="600" height="260"></canvas>
-  </article>
-
-
-  <article class="card full" id="communityCard">
-    <div class="section-head">
-      <div>
-        <p class="eyebrow" data-i18n="community">Community</p>
-        <h3 data-i18n="shareMoment">Deel een moment</h3>
-      </div>
-      <span class="badge" data-i18n="foodOrSport">Eten of sport</span>
-    </div>
-
-    <div class="post-composer">
-      <label class="photo-upload">
-        <input id="photoInput" type="file" accept="image/*" capture="environment">
-        <span>📷</span>
-        <strong data-i18n="addPhoto">Foto toevoegen</strong>
-      </label>
-      <div id="photoPreviewWrap" class="photo-preview-wrap hidden">
-        <img id="photoPreview" alt="preview">
-        <button id="removePreview" class="remove-photo" type="button">×</button>
-      </div>
-      <textarea id="postCaption" rows="3" data-i18n-placeholder="captionPlaceholder" placeholder="Wat wil je delen?"></textarea>
-
-      <div class="emoji-bar composer-emoji" id="composerEmojiBar">
-        <button type="button">❤️</button><button type="button">🔥</button><button type="button">💪</button>
-        <button type="button">😋</button><button type="button">👏</button><button type="button">😂</button>
-        <button type="button">🥗</button><button type="button">🚴</button><button type="button">🚣</button>
-      </div>
-
-      <button class="primary-btn" id="publishPost" data-i18n="publish">Plaatsen</button>
-    </div>
-
-    <div class="feed-head">
-      <h4 data-i18n="recentPosts">Recente posts</h4>
-      <button class="secondary-btn" id="clearPosts" data-i18n="clearMyPosts">Mijn posts wissen</button>
-    </div>
-    <div id="socialFeed" class="social-feed"></div>
-  </article>
-
-  <article class="card full">
-    <div class="section-head"><div><p class="eyebrow" data-i18n="shopping">Boodschappen</p><h3 data-i18n="weekList">Weeklijst</h3></div><button class="secondary-btn" id="resetShopping" data-i18n="resetWeek">Week opnieuw</button></div>
-    <div class="shopping-add"><input id="shoppingInput"><button class="primary-btn" id="addShopping">+</button></div>
-    <div class="shopping-grid" id="shoppingList"></div>
+    <div class="section-head"><div><div class="eyebrow" data-t="shopping">Boodschappen</div><h3 data-t="list">Lijst</h3></div></div>
+    <div class="inline"><input id="shopInput"><button id="addShop" class="primary">＋</button></div>
+    <div id="shopping"></div>
   </article>
 </section>
-</main>
 </div>
 <script src="./app.js"></script>
 </body>
